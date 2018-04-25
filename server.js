@@ -4,10 +4,15 @@ const Restify = require('restify');
 const server = Restify.createServer({
 	name:'Test'
 });
-const sample = require('./sample');
 
-const WELCOME_MESSAGE="Hi There! :D I'm Physics Bot. I can help you improve in Physics."
+const kinematics = require('./kinematics');
+const dynamics = require('./dynamics');
+const claw = require('./conservation_laws');
+let sample = kinematics;
 
+const WELCOME_MESSAGE="Hi There! I'm Physics Bot. I can help you improve in Physics. Just follow the instructions and answer the questions :D"
+const HAPPY_MESSAGE="Correct!! :D :D"
+const SAD_MESSAGE="Sorry :( The answer is: "
 
 server.use(Restify.jsonp());
 server.use(Restify.bodyParser());
@@ -30,8 +35,12 @@ let topics =[{
 	payload: "0"
 },{
 	content_type:"text",
-	title: "Others",
+	title: "Dynamics",
 	payload: "1"
+},{
+	content_type:"text",
+	title: "Conservation Laws",
+	payload: "2"
 }];
 server.post('/',(req,res,next)=>{
 	f.incoming(req,res,msg => {
@@ -47,14 +56,29 @@ server.post('/',(req,res,next)=>{
 				})
 			})
 		}else if(welcome==1&&ans==0){
-			if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload!=0){
-				f.txt(msg.sender,"Under development :|",function(data){
-					f.quickreply(msg.sender,"Please choose another topic",topics,function(data){
-						return null;
-					})
+			if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==0){
+				//console.log("kine");
+				sample = kinematics;
+				ind=parseInt(Math.random()*sample.length);
+				console.log(ind+"\t"+sample.length);
+				ans=1;
+				console.log(sample[ind].qtext);
+				f.txt(msg.sender,sample[ind].qtext,function(data){
+					return null;
 				})
-			}
-			else{
+			}else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==1){
+				//console.log("dyn");
+				sample = dynamics;
+				//console.log(sample);
+				ind=parseInt(Math.random()*sample.length);
+				console.log(ind+"\t"+sample.length);
+				ans=1;
+				f.txt(msg.sender,sample[ind].qtext,function(data){
+					return null;
+				})
+			}else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==2){
+				//console.log("claw");
+				sample = claw;
 				ind=parseInt(Math.random()*sample.length);
 				console.log(ind+"\t"+sample.length);
 				ans=1;
@@ -72,7 +96,7 @@ server.post('/',(req,res,next)=>{
 			//console.log(temp);
 			if(temp==sample[ind].ans){
 				welcome=0;ans=0;
-				f.txt(msg.sender,"Correct!! :D :D",function(data){
+				f.txt(msg.sender,HAPPY_MESSAGE,function(data){
 					f.txt(msg.sender,"You can go to "+sample[ind].ref+" for further reference :)",function(data){
 						return null;
 					})
@@ -87,7 +111,7 @@ server.post('/',(req,res,next)=>{
 					})
 				}else{
 					welcome=0;ans=0;hintcount=0;
-					f.txt(msg.sender,"Sorry :( The answer is: "+sample[ind].ans,function(data){
+					f.txt(msg.sender,SAD_MESSAGE+sample[ind].ans,function(data){
 						f.txt(msg.sender,"You can go to "+sample[ind].ref+" for further reference :)",function(data){
 							return null;
 						})
@@ -101,4 +125,3 @@ server.post('/',(req,res,next)=>{
 f.subscribe();
 
 server.listen(PORT,() => console.log(`Running on PORT: ${PORT}`));
-
