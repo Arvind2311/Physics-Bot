@@ -42,12 +42,22 @@ let topics =[{
 	title: "Conservation Laws",
 	payload: "2"
 }];
+let choice = [{
+	content_type:"text",
+	title: "Yes",
+	payload: "100"
+},{
+	content_type:"text",
+	title: "No",
+	payload: "101"
+}]
 server.post('/',(req,res,next)=>{
 	f.incoming(req,res,msg => {
 		console.log(msg.message);
 		f.sender_action(msg.sender,"typing_on",function(data){
 			return null;
 		})
+		console.log(welcome+"\t"+ans);
 		if(welcome==0){
 			welcome=1;
 			f.txt(msg.sender,WELCOME_MESSAGE,function(data){
@@ -85,6 +95,12 @@ server.post('/',(req,res,next)=>{
 				f.txt(msg.sender,sample[ind].qtext,function(data){
 					return null;
 				})
+			}else{
+				f.txt(msg.sender,"Sorry I didn't quite get your message. Please choose from the options.",function(data){
+					f.quickreply(msg.sender,"Choose your topic.",topics,function(data){
+						return null;
+					})
+				})
 			}
 		}else if(welcome==1&&ans==1){
 			if(msg.message.text=="hint"){
@@ -95,11 +111,23 @@ server.post('/',(req,res,next)=>{
 			let temp = parseFloat(msg.message.text);
 			//console.log(temp);
 			if(temp==sample[ind].ans){
-				welcome=0;ans=0;
+				//welcome=0;ans=0;
 				f.txt(msg.sender,HAPPY_MESSAGE,function(data){
 					f.txt(msg.sender,"You can go to "+sample[ind].ref+" for further reference :)",function(data){
-						return null;
+						f.quickreply(msg.sender,"Would you like to continue??",choice,function(data){
+							return null;
+						})
 					})
+				})
+			}else if(msg.message.quick_reply.payload==100){
+				ans=0;
+				f.quickreply(msg.sender,"Choose your topic.",topics,function(data){
+					return null;
+				})
+			}else if(msg.message.quick_reply.payload==101){
+				welcome=0;ans=0;
+				f.txt(msg.sender,"Sorry to see you leave :(. All the best in your physics exam :D :D",function(data){
+					return null;
 				})
 			}else{
 				if(hintcount<2){

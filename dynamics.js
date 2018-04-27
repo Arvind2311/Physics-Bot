@@ -37,7 +37,7 @@ dynamics = [
 },{
 	qtext: "An object with mass of 630 g is hung on a spring. What is the force of the object acting on the spring?",
 	ans: 6.17,
-	hint: "For a better understanding draw free body diagram",
+	hint: "For a better understanding draw free body diagram. Answer in Newtons",
 	ref: "http://www.solvephysics.com/dynamics_problem50.shtml"
 },{
 	qtext: "A particle moves in a circle of radius 1 m. Its linear speed is given by v=4*t , where t is in second and v in meter/second. Find the radial acceleration at t = 2s. ",
