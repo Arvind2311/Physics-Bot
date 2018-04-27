@@ -30,7 +30,7 @@ kinematics = [
 	hint:"use vf^2=vi^2+2*a*d",
 	ref:"http://www.physicsclassroom.com/Class/1DKin/U1L6d.cfm#sol12"
 },{
-	qtext:"Upton Chuck is riding the Giant Drop at Great America. If Upton free falls for 2.60 seconds, what will be his final velocity and how far will he fall? ",
+	qtext:"Upton Chuck is riding the Giant Drop at Great America. If Upton free falls for 2.60 seconds, what will be his final velocity?",
 	ans:25.5,
 	hint: "consider the formula d=v*t+0.5*a*t*t",
 	ref:"http://www.physicsclassroom.com/Class/1DKin/U1L6d.cfm#sol3"

@@ -22,7 +22,7 @@ dynamics = [
 },{
 	qtext: "A block of mass 5 kg lies on a horizontal table. The block is at rest. The only forces acting on the block are the force due to gravity and the normal force from the table. What is the magnitude of the friction force?",
 	ans: 0,
-	hint: "This is a trick question >:) >:)",
+	hint: "This is a trick question 3:-) 3:-)",
 	ref: "http://www.solvephysics.com/dynamics_problem20.shtml"	
 },{
 	qtext: "A 35 kg crate undergoes a horizontal acceleration of 1.5 m/s^2 on a level surface when pulled by a 65.0 N force. What is the coefficient of kinetic friction between the crate and the surface?",
