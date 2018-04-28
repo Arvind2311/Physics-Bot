@@ -54,7 +54,7 @@ let choice = [{
 }]
 server.post('/',(req,res,next)=>{
 	f.incoming(req,res,msg => {
-		//console.log(msg.message);
+		console.log("welcome flag: "+welcome);
 		f.sender_action(msg.sender,"typing_on",function(data){
 			return null;
 		})
@@ -76,7 +76,6 @@ server.post('/',(req,res,next)=>{
 				//console.log("kine");
 				sample = kinematics;
 				ind=parseInt((Math.random()*n)+(increment*n));
-				console.log(n+"\t"+ind);
 				ans=1;
 				f.txt(msg.sender,sample[ind].qtext,function(data){
 					return null;
@@ -86,7 +85,6 @@ server.post('/',(req,res,next)=>{
 				sample = dynamics;
 				//console.log(sample);
 				ind=parseInt((Math.random()*n)+(increment*n));
-				console.log(n+"\t"+ind);
 				ans=1;
 				f.txt(msg.sender,sample[ind].qtext,function(data){
 					return null;
@@ -94,8 +92,7 @@ server.post('/',(req,res,next)=>{
 			}else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==2){
 				//console.log("claw");
 				sample = claw;
-				console.log(ind+"\t"+sample.length);
-				console.log(n+"\t"+ind);
+				ind=parseInt((Math.random()*n)+(increment*n));
 				ans=1;
 				f.txt(msg.sender,sample[ind].qtext,function(data){
 					return null;
@@ -124,7 +121,7 @@ server.post('/',(req,res,next)=>{
 							f.txt(msg.sender,"Increasing difficulty 3:-) ",function(data){
 								increment++;
 								if(increment==3){
-									f.txt(msg.sender,"You have reached max difficulty :D :D. You might want to change to another topic :D",function(data){
+									f.txt(msg.sender,"You have reached max difficulty :D :D . You might want to change to another topic :D",function(data){
 										f.quickreply(msg.sender,"Would you like to continue??",choice,function(data){
 											return null;
 										})
@@ -149,7 +146,7 @@ server.post('/',(req,res,next)=>{
 				})
 			}else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==101){
 				welcome=0;ans=0;correctans=0;wrongans=0;increment=0;
-				f.txt(msg.sender,"Sorry to see you leave :(. All the best in your physics exam :D :D",function(data){
+				f.txt(msg.sender,"Sorry to see you leave :( . All the best in your physics exam :D :D",function(data){
 					return null;
 				})
 			}else{
@@ -161,16 +158,16 @@ server.post('/',(req,res,next)=>{
 						})
 					})
 				}else{
-					welcome=0;ans=0;hintcount=0;
+					hintcount=0;
 					f.txt(msg.sender,SAD_MESSAGE+sample[ind].ans,function(data){
 						f.txt(msg.sender,"You can go to "+sample[ind].ref+" for further reference :)",function(data){
 							wrongans++;
 							if(wrongans==1){
 								wrongans=0;
-								f.txt(msg.sender,"Decreasing difficulty :( ",function(data){
+								f.txt(msg.sender,"Decreasing difficulty :(  ",function(data){
 									increment--;
 									if(increment==-1){
-										f.txt(msg.sender,"You need to brush up your concepts :(",function(data){
+										f.txt(msg.sender,"You need to brush up your concepts :( ",function(data){
 											f.quickreply(msg.sender,"Would you like to continue??",choice,function(data){
 												return null;
 											})
