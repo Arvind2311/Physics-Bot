@@ -1,33 +1,41 @@
 'use strict';
 
+//Using Restify service we are creating a server to communicate with FB Messenger.
 const Restify = require('restify');
 const server = Restify.createServer({
 	name:'Test'
 });
 
+//Modules are being imported. Each module contains questions based on their topic.
 const kinematics = require('./kinematics');
 const dynamics = require('./dynamics');
 const claw = require('./conservation_laws');
 let sample = kinematics;
 
+//Some constant messages which occur frequently.
 const WELCOME_MESSAGE="Hi There! I'm Physics Bot. I can help you improve in Physics. Just follow the instructions and answer the questions :D"
 const HAPPY_MESSAGE="Correct!! :D :D"
 const SAD_MESSAGE="Sorry :( The answer is: "
 
+//Importing jsonp and bodyParser to convert message object of FB from string to JSON Object
 server.use(Restify.jsonp());
 server.use(Restify.bodyParser());
 
+//Dedicating a port in the local server.
 const PORT = process.env.PORT || 3000;
 const config = require('./config');
 
+//A class has been created so that the server and SendAPI of Messenger communicate with ease.
 const FBeamer = require('./fbeamer');
 const f = new FBeamer(config);
 
+//Registering the server with Webhook.
 server.get('/',(req,res,next)=>{
 	f.registerHook(req,res);
 	return next();
 });
 
+//Some constants required by the Bot.
 let correctans=0,wrongans=0,increment=0;
 let welcome=0,ans=0,ind=0,hintcount=0;
 let topics =[{
@@ -52,17 +60,24 @@ let choice = [{
 	title: "No",
 	payload: "101"
 }]
+
+//Post method of server to send messages as the bot.
 server.post('/',(req,res,next)=>{
 	f.incoming(req,res,msg => {
-		console.log("welcome flag: "+welcome);
+		//console.log("welcome flag: "+welcome);
+
+		//Typing feel of FB Messenger(Kindof loading bar)
 		f.sender_action(msg.sender,"typing_on",function(data){
 			return null;
 		})
+		//Increases/Decreases the difficulty of quesitons.
 		if(increment==-1){
 			increment++;
 		}else if(increment==3){
 			increment--;
 		}
+
+		//Welcome message.
 		if(welcome==0){
 			welcome=1;
 			f.txt(msg.sender,WELCOME_MESSAGE,function(data){
@@ -70,7 +85,9 @@ server.post('/',(req,res,next)=>{
 					return null;
 				})
 			})
-		}else if(welcome==1&&ans==0){
+		}
+		//Topic selection and question generation.
+		else if(welcome==1&&ans==0){
 			let n=parseInt(sample.length/3);
 			if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==0){
 				//console.log("kine");
@@ -104,13 +121,16 @@ server.post('/',(req,res,next)=>{
 					})
 				})
 			}
-		}else if(welcome==1&&ans==1){
+		}
+		//Awaiting response and providing hints.
+		else if(welcome==1&&ans==1){
 			if(msg.message.text=="hint"){
 				f.txt(msg.sender,sample[ind].hint,function(data){
 					return null;
 				})
 			}
 			let temp = parseFloat(msg.message.text);
+			//If answered correctly increase difficulty.
 			if(temp==sample[ind].ans){
 				//welcome=0;ans=0;
 				f.txt(msg.sender,HAPPY_MESSAGE,function(data){
@@ -139,7 +159,9 @@ server.post('/',(req,res,next)=>{
 						}
 					})
 				})
-			}else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==100){
+			}
+			//Continue Yes or No.
+			else if(msg.message.quick_reply!=undefined&&msg.message.quick_reply.payload==100){
 				ans=0;
 				f.quickreply(msg.sender,"Choose your topic.",topics,function(data){
 					return null;
@@ -149,7 +171,10 @@ server.post('/',(req,res,next)=>{
 				f.txt(msg.sender,"Sorry to see you leave :( . All the best in your physics exam :D :D",function(data){
 					return null;
 				})
-			}else{
+			}
+			//If wrong answer received,it provides 2 chances with hint and finally decreases difficulty if wrong
+			//answer is received yet again. 
+			else{
 				if(hintcount<2){
 					hintcount++;
 					f.txt(msg.sender,"Please try again",function(data){
@@ -191,6 +216,8 @@ server.post('/',(req,res,next)=>{
 	})
 })
 
+//Subscribing to the page.
 f.subscribe();
 
+//Server listening in Port#****
 server.listen(PORT,() => console.log(`Running on PORT: ${PORT}`));

@@ -3,6 +3,7 @@
 const request = require('request');
 
 class FBeamer{
+	//Constructor method
 	constructor(config){
 		try{
 			if(!config || config.PAGE_ACCESS_TOKEN === undefined || config.VERIFY_TOKEN === undefined){
@@ -17,7 +18,7 @@ class FBeamer{
 			console.log(e.stack);
 		}
 	}
-
+	//Register Webhook method
 		registerHook(req, res) {
 			// If req.query.hub.mode is 'subscribe'
 			// and if req.query.hub.verify_token is the same as this.VERIFY_TOKEN
@@ -31,7 +32,7 @@ class FBeamer{
 				return res.status(403).end();
 			}
 		}
-
+		//Subscribe to page method
 		subscribe(){
 			request({
 				uri: 'https://graph.facebook.com/v2.6/me/subscribed_apps',
@@ -48,7 +49,7 @@ class FBeamer{
 				}
 			});
 		}
-
+		//Incoming message to bot method
 		incoming(req,res,cb){
 			let data=req.body;
 			if(data.object ==='page'){
@@ -65,7 +66,7 @@ class FBeamer{
 			}
 			res.send(200);
 		}
-
+		//Send Message method. Message has to be sent in a particular format.
 		sendMessage(payload,cb){
 			return new Promise((resolve,reject) => {
 				//Create HTTP POST request
@@ -91,7 +92,7 @@ class FBeamer{
 				});
 			});
 		}
-
+		//The typing/loading kindof action
 		sender_action(id,action,cb){
 			let obj={
 				recipient:{
@@ -105,7 +106,7 @@ class FBeamer{
 				})
 				.catch(error => console.log("sender_action error"+error));
 		}
-
+		//Send a plain text message.
 		txt(id,text,cb){
 			let obj={
 				recipient:{
@@ -121,7 +122,7 @@ class FBeamer{
 				})
 				.catch(error => console.log("txt fn error"+error));
 		}
-
+		//Send a response with some options for quick reply cases.
 		quickreply(id,str,qr_data,cb){
 			//console.log(qr_data);
 			let obj={
